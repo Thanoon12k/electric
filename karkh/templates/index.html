@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Elicetric</title>
+
+    <style>
+          .info h1 {
+                margin: 0;
+            }
+
+            .admin{
+             left:20px;
+             position:absolute;
+            }
+                .info {
+            font-size: 1.2em;
+            display: flex;
+            padding: 1em 3em;
+            height: 3em;
+            }
+
+            :root {
+            --color: #000;
+            --transition-time: 0.5s;
+            }
+
+            * {
+            box-sizing: border-box;
+            }
+
+            body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Open Sans';
+            background: #fafafa;
+            }
+
+            a {
+            color: inherit;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                text-align: center;
+                direction:rtl;
+              }
+
+              th, td {
+
+                padding: 8px;
+              }
+
+              tr:nth-child(even){background-color: #f2f2f2}
+
+              th {
+                background-color: #04AA6D;
+                color: white;
+              }
+
+
+    </style>
+</head>
+<body>
+    <section class="info" style="direction: rtl;">
+<div >
+      {% if request.user.is_superuser %}<a id="admin"  class='admin' href='/admin'>admin</a>{% endif%}
+
+  <h1>  {{header}}</a></h1>
+
+    </div>
+
+      </section>
+      <section name="search" class="info" style="margin-bottom: 2rem;">
+        <div style=" margin: auto;width: 50%; padding: 10px;">
+            <form class="form-inline" method="post"> {% csrf_token %}
+              <input name="search"type="search" placeholder="ابحث عن رقم المحولة او موقع المحولة"
+              style="width:70%; padding:10px;"  aria-label="Search">
+              <button class="btn"style=" padding:10px;" type="submit">بحث</button>
+
+                </form>
+            </div>
+        </section>
+
+<section name="data" class="card-warpper">
+ <table >
+    <tr>
+        <th> التسلسل</th>
+        <th>اسم القطاع</th>
+        <th>اسم الصيانة </th>
+        <th>رقم المحولة </th>
+        <th>  سعة المحولة  </th>
+        <th  >الحالة  </th>
+        <th >تاريخ العطل   </th>
+        <th>العنوان    </th>
+        {% if request.user.is_superuser %}
+             <th>تم الاصلاح    </th>
+              {%endif%}
+    </tr>
+  {%for trns in transformers%}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+
+            <td>{{trns.section_name}}</td>
+            <td>{{trns.maintinance_name}}</td>
+            <td>{{trns.number}}</td>
+            <td>{{trns.capacity}} </td>
+            <td>{{trns.status}}</td>
+            <td>{{trns.brokentime|date:"Y-m-d" }}</td>
+            <td>{{trns.address}}</td>
+             {% if request.user.is_superuser %}
+                <td>
+
+                <form method="POST">
+                        {% csrf_token %}
+                    <input name='pk' type='number' value='{{trns.id}}' hidden>
+
+                    <button type="submit"  class="tag" style=" cursor: pointer;">تم الاصلاح </button>
+                     </form>
+
+                    </td>
+            {%endif%}
+        </tr>
+
+
+        {%endfor%}
+     </table>
+    </section>
+
+    <div style="direction: rtl; right: 25px;position: absolute;">
+      <br>
+    تاريخ اليوم  :  {{tt|date:" d-m-Y" }}
+   </div>
+
+</body>
+</html>
